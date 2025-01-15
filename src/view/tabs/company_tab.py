@@ -9,7 +9,7 @@ from src.view.generic_tree_view import GenericTreeView
 class CompanyTab(ttk.Frame):
     def __init__(self, root: ttk.Notebook, controller: Controller):
         super().__init__(root)
-        self.controller = controller
+        self.controller = controller.company_controller
         root.add(self, text="Firmen")
         input_container = ttk.Frame(self, padding=(0, 10))
         basic_container = ttk.Frame(input_container)

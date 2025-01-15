@@ -66,3 +66,9 @@ class Model:
 
     def get_student_by_name(self, name: str) -> Student:
         return self.student_repo.get_student_by_name(name)
+
+    def get_selection_student_options(self) -> list[Student]:
+        return self.student_repo.get_students_without_selection()
+
+    def get_students_with_selection(self) -> list[Student]:
+        return self.student_repo.get_students_with_selection()

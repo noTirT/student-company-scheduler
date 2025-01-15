@@ -12,7 +12,7 @@ class View(tk.Tk):
 
         self.controller = controller
         self.title("Tabbed Application")
-        self.geometry("600x400")
+        self.geometry("800x600")
 
         # Tabs setup
         self.notebook = ttk.Notebook(self)
@@ -26,7 +26,7 @@ class View(tk.Tk):
         def on_tab_change(*args):
             selected_tab = self.notebook.tab(self.notebook.select(), "text")
             if selected_tab == "Belegungen":
-                selection_tab.update_table_data()
+                selection_tab.update_view()
             elif selection_tab == "Schüler":
                 student_tab.update_table_data()
 

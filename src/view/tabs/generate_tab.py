@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
 import os
-import time
 
 from src.controller.controller import Controller
 from src.csv_writer import CSVWriter
@@ -23,18 +22,20 @@ class GenerateTab(ttk.Frame):
             input_container, text="Maximale Schüler gleicher Klasse in Slot:"
         ).grid(row=0, column=0, padx=5, pady=5)
 
-        self.limit_entry = tk.Entry(input_container, validate="key")
-        self.limit_entry.insert(0, "4")
+        self.limit_var = tk.IntVar()
+        self.limit_entry = tk.Scale(
+            input_container,
+            variable=self.limit_var,
+            from_=4,
+            to=10,
+            orient=tk.HORIZONTAL,
+        )
         self.limit_entry.grid(row=0, column=1, padx=5, pady=5)
 
-        def validate_number_input(character):
-            return character.isdigit()
-
-        reg = self.register(validate_number_input)
-        self.limit_entry.config(validatecommand=(reg, "%S"))
-
         self.generate_button = tk.Button(
-            input_container, text="Plan generieren", command=self.generate_plan
+            input_container,
+            text="Plan generieren",
+            command=self.generate_plan,
         )
         self.generate_button.grid(row=0, column=2, padx=5, pady=5)
 
@@ -98,10 +99,10 @@ class GenerateTab(ttk.Frame):
     def generate_plan(self):
         self.loading_var.set("Loading...")
         self.update_idletasks()
-        class_limit = int(float(self.limit_entry.get()))
-        company_capacities = self.controller.get_company_capacities()
-        student_grades = self.controller.get_student_grades()
-        student_choices = self.controller.get_student_choices()
+        class_limit = self.limit_var.get()
+        company_capacities = self.controller.company_controller.get_company_capacities()
+        student_grades = self.controller.student_controller.get_student_grades()
+        student_choices = self.controller.student_controller.get_student_choices()
 
         self.plan = generate_plan(
             schueler_wahlen=student_choices,

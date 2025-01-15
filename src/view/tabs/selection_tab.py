@@ -11,21 +11,19 @@ class SelectionTab(ttk.Frame):
     def __init__(self, root: ttk.Notebook, controller: Controller):
         super().__init__(root)
         self.controller = controller
+        self.selection_controller = controller.selection_controller
 
         root.add(self, text="Belegungen")
         container = ttk.Frame(self)
 
         tk.Label(container, text="Schüler").grid(row=0, column=0, padx=5, pady=5)
-        students = self.controller.get_all_students()
-        options = []
-        for index, student in enumerate(students):
-            if student.name in options:
-                options.append(student.name + str(index))
-            else:
-                options.append(student.name)
+        students = controller.student_controller.get_selection_student_options()
 
         self.autocomplete_dropdown = AutocompleteCombobox(
-            container, completevalues=options, postcommand=self.update_data
+            container,
+            state="readonly",
+            completevalues=students,
+            postcommand=self.update_student_selections,
         )  # Replace dynamically
         self.autocomplete_dropdown.grid(row=0, column=1, padx=5, pady=5)
 
@@ -40,7 +38,7 @@ class SelectionTab(ttk.Frame):
             row=0, column=2, padx=5, pady=5
         )
 
-        companies = self.controller.get_all_firmen()
+        companies = controller.company_controller.get_all_firmen()
         # Grid rows
         self.belegungen = {}
         for i, slot in enumerate(["Slot 1", "Slot 2", "Slot 3"], start=1):
@@ -56,11 +54,11 @@ class SelectionTab(ttk.Frame):
             ]
 
             self.belegungen[f"block1_slot{i}"] = AutocompleteCombobox(
-                grid_frame, completevalues=block1_options
+                grid_frame, completevalues=block1_options, state="readonly"
             )
             self.belegungen[f"block1_slot{i}"].grid(row=i, column=1, padx=5, pady=5)
             self.belegungen[f"block2_slot{i}"] = AutocompleteCombobox(
-                grid_frame, completevalues=block2_options
+                grid_frame, completevalues=block2_options, state="readonly"
             )
             self.belegungen[f"block2_slot{i}"].grid(row=i, column=2, padx=5, pady=5)
 
@@ -72,6 +70,7 @@ class SelectionTab(ttk.Frame):
                 "<KeyRelease>",
             ]:
                 box.bind(sequence, self.validate_fields)
+                box.bind(sequence, self.filter_used_slot_options, add="+")
 
         self.submit_button = tk.Button(
             container,
@@ -96,14 +95,14 @@ class SelectionTab(ttk.Frame):
                 "Block 2 Slot 3",
             ],
             self.make_table_list(),
-            self.controller.delete_selection,
+            self.selection_controller.delete_selection,
             horizontal_scrollbar=True,
         )
 
         tree_container.pack()
 
     def make_table_list(self):
-        selections = self.controller.get_all_selections()
+        selections = self.selection_controller.get_all_selections()
         result = []
         for key, value in selections.items():
             result.append([key, *value])
@@ -111,13 +110,15 @@ class SelectionTab(ttk.Frame):
         return result
 
     def submit_selection(self):
-        self.controller.submit_belegungen(
+        self.selection_controller.submit_belegungen(
             student=self.autocomplete_dropdown.get(),
             belegungen={key: widget.get() for key, widget in self.belegungen.items()},
         )
 
         for box in [*self.belegungen.values(), self.autocomplete_dropdown]:
             box.delete(0, tk.END)
+
+        self.update_view()
 
     def validate_fields(self, *args):
         check_empty_fields(
@@ -126,17 +127,47 @@ class SelectionTab(ttk.Frame):
             button=self.submit_button,
         )
 
-    def update_table_data(self):
+    def update_view(self):
         self.generic_tree.update_data(self.make_table_list())
+        self.update_student_selections()
+        self.update_slot_options()
 
-    def update_data(self):
-        students = self.controller.get_all_students()
+    def filter_used_slot_options(self, *args):
+        selections = {key: widget.get() for key, widget in self.belegungen.items()}
 
-        options = []
-        for index, student in enumerate(students):
-            if student.name in options:
-                options.append(student.name + str(index))
-            else:
-                options.append(student.name)
+        companies = self.controller.company_controller.get_all_firmen()
+        for i, slot in enumerate(["Slot 1", "Slot 2", "Slot 3"], start=1):
+            block1_options = [
+                company.name
+                for company in companies
+                if ((i) in company.slots["block1"])
+                and not company.name in selections.values()
+            ]
+            block2_options = [
+                company.name
+                for company in companies
+                if ((i) in company.slots["block2"])
+                and not company.name in selections.values()
+            ]
 
-        self.autocomplete_dropdown["values"] = options
+            self.belegungen[f"block1_slot{i}"]["values"] = block1_options
+            self.belegungen[f"block2_slot{i}"]["values"] = block2_options
+
+    def update_slot_options(self):
+        companies = self.controller.company_controller.get_all_firmen()
+        # Grid rows
+        for i, slot in enumerate(["Slot 1", "Slot 2", "Slot 3"], start=1):
+            block1_options = [
+                company.name for company in companies if (i) in company.slots["block1"]
+            ]
+            block2_options = [
+                company.name for company in companies if (i) in company.slots["block2"]
+            ]
+
+            self.belegungen[f"block1_slot{i}"]["values"] = block1_options
+            self.belegungen[f"block2_slot{i}"]["values"] = block2_options
+
+    def update_student_selections(self):
+        students = self.controller.student_controller.get_selection_student_options()
+
+        self.autocomplete_dropdown["values"] = students

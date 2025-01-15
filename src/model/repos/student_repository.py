@@ -65,3 +65,19 @@ class StudentRepository:
         cursor.execute("PRAGMA foreign_keys = ON;")
         cursor.execute("DELETE FROM student WHERE name=$1", [name])
         self.db.commit()
+
+    def get_students_without_selection(self):
+        cursor = self.db.cursor()
+        cursor.execute(
+            "SELECT * FROM student WHERE id NOT IN(SELECT student_id FROM student_selection)"
+        )
+        result = cursor.fetchall()
+        return list(map(lambda item: Student.from_row(item), result))
+
+    def get_students_with_selection(self):
+        cursor = self.db.cursor()
+        cursor.execute(
+            "SELECT * FROM student WHERE id IN(SELECT student_id FROM student_selection)"
+        )
+        result = cursor.fetchall()
+        return list(map(lambda item: Student.from_row(item), result))
