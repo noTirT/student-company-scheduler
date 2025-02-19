@@ -4,6 +4,7 @@ from tkinter import ttk
 from src.controller.controller import Controller
 from src.util.functions import check_empty_fields
 from src.view.generic_tree_view import GenericTreeView
+from ttkwidgets.autocomplete import AutocompleteCombobox
 
 
 class StudentTab(ttk.Frame):
@@ -25,7 +26,9 @@ class StudentTab(ttk.Frame):
         self.nachname_entry.grid(row=1, column=1, padx=5, pady=5)
 
         tk.Label(input_container, text="Klasse:").grid(row=2, column=0, padx=5, pady=5)
-        self.klasse = tk.Entry(input_container)
+        self.klasse = AutocompleteCombobox(
+            input_container, completevalues=self.controller.get_available_grades()
+        )
         self.klasse.grid(row=2, column=1, padx=5, pady=5)
 
         self.submit_button = tk.Button(

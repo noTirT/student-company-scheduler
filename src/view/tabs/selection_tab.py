@@ -41,7 +41,7 @@ class SelectionTab(ttk.Frame):
         companies = controller.company_controller.get_all_firmen()
         # Grid rows
         self.belegungen = {}
-        for i, slot in enumerate(["Slot 1", "Slot 2", "Slot 3"], start=1):
+        for i, slot in enumerate(["Slot 1", "Slot 2"], start=1):
             tk.Label(grid_frame, text=slot).grid(
                 row=i, column=0, padx=5, pady=5, sticky="w"
             )
@@ -89,10 +89,8 @@ class SelectionTab(ttk.Frame):
                 "Schülername",
                 "Block 1 Slot 1",
                 "Block 1 Slot 2",
-                "Block 1 Slot 3",
                 "Block 2 Slot 1",
                 "Block 2 Slot 2",
-                "Block 2 Slot 3",
             ],
             self.make_table_list(),
             self.selection_controller.delete_selection,
@@ -136,7 +134,7 @@ class SelectionTab(ttk.Frame):
         selections = {key: widget.get() for key, widget in self.belegungen.items()}
 
         companies = self.controller.company_controller.get_all_firmen()
-        for i, slot in enumerate(["Slot 1", "Slot 2", "Slot 3"], start=1):
+        for i, slot in enumerate(["Slot 1", "Slot 2"], start=1):
             block1_options = [
                 company.name
                 for company in companies
@@ -156,7 +154,7 @@ class SelectionTab(ttk.Frame):
     def update_slot_options(self):
         companies = self.controller.company_controller.get_all_firmen()
         # Grid rows
-        for i, slot in enumerate(["Slot 1", "Slot 2", "Slot 3"], start=1):
+        for i, slot in enumerate(["Slot 1", "Slot 2"], start=1):
             block1_options = [
                 company.name for company in companies if (i) in company.slots["block1"]
             ]

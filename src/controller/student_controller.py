@@ -23,6 +23,10 @@ class StudentController:
             student_grades[student.name] = student.grade
         return student_grades
 
+    def get_available_grades(self) -> list[str]:
+        grades = self.model.get_available_grades()
+        return list(set(grades))
+
     def get_student_choices(self):
         all_students = self.model.get_students_with_selection()
         all_choices = self.model.get_all_selections_ordered()

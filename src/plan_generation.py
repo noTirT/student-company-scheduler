@@ -29,7 +29,7 @@ def generate_plan(
                 model.Add(
                     sum(
                         zuweisung[(schueler, block, slot, firma)]
-                        for firma in wahlen[block]
+                        for firma in schueler_wahlen[schueler][block]
                     )
                     == 1
                 )

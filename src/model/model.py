@@ -72,3 +72,6 @@ class Model:
 
     def get_students_with_selection(self) -> list[Student]:
         return self.student_repo.get_students_with_selection()
+
+    def get_available_grades(self) -> list[str]:
+        return self.student_repo.get_available_grades()

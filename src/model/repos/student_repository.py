@@ -81,3 +81,9 @@ class StudentRepository:
         )
         result = cursor.fetchall()
         return list(map(lambda item: Student.from_row(item), result))
+
+    def get_available_grades(self) -> list[str]:
+        cursor = self.db.cursor()
+        cursor.execute("SELECT grade FROM student")
+        result = cursor.fetchall()
+        return list(map(lambda item: item[0], result))

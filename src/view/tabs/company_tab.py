@@ -65,7 +65,7 @@ class CompanyTab(ttk.Frame):
 
         self.checkbox_values = {"block1": [], "block2": []}
 
-        for i, slot in enumerate(["Slot 1", "Slot 2", "Slot 3"], start=1):
+        for i, slot in enumerate(["Slot 1", "Slot 2"], start=1):
             tk.Label(slot_container, text=slot).grid(
                 row=0 + i, column=0, padx=5, pady=5, sticky="w"
             )

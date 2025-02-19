@@ -54,7 +54,7 @@ class GenerateTab(ttk.Frame):
         self.generic_tree = GenericTreeView(
             tree_container,
             self.controller,
-            ["Name", "Klasse", "1-1", "1-2", "1-3", "2-1", "2-2", "2-3"],
+            ["Name", "Klasse", "1-1", "1-2", "2-1", "2-2"],
             self.make_table_list(),
             horizontal_scrollbar=True,
         )
@@ -77,16 +77,7 @@ class GenerateTab(ttk.Frame):
             return []
         return list(
             map(
-                lambda plan_entry: [
-                    plan_entry["name"],
-                    plan_entry["klasse"],
-                    plan_entry["block1_1"],
-                    plan_entry["block1_2"],
-                    plan_entry["block1_3"],
-                    plan_entry["block2_1"],
-                    plan_entry["block2_2"],
-                    plan_entry["block2_3"],
-                ],
+                lambda plan_entry: list(plan_entry.values()),
                 self.plan,
             )
         )
@@ -108,7 +99,7 @@ class GenerateTab(ttk.Frame):
             schueler_wahlen=student_choices,
             firmen_kapazitaet=company_capacities,
             klassen_grenze=class_limit,
-            slots_pro_block=3,
+            slots_pro_block=2,
             schueler_klassen=student_grades,
         )
 
