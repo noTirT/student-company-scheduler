@@ -4,7 +4,7 @@ import os
 
 from src.controller.controller import Controller
 from src.csv_writer import CSVWriter
-from src.plan_generation import generate_plan, generate_plan_custom
+from src.plan_generation import generate_plan_custom
 from src.view.directory_selector import DirectorySelector
 from src.view.generic_tree_view import GenericTreeView
 
