@@ -19,6 +19,8 @@ class GenericTreeView(ttk.Treeview):
         self.controller = controller
         self.on_delete = on_delete
 
+        self.root = root
+
         container = ttk.Frame(root)
 
         super().__init__(container, columns=columns, show="headings")
@@ -35,38 +37,14 @@ class GenericTreeView(ttk.Treeview):
         if horizontal_scrollbar:
             self.add_horizontal_scrollbar(container)
 
-        self._adjust_column_width()
-
         self.grid(row=0, column=0, sticky="nsew")
 
         if self.on_delete:
             self.bind("<Button-3>", self.show_context_menu)
-            self.bind("<Configure>", self._adjust_column_width)
             self.menu = tk.Menu(container, tearoff=0)
             self.menu.add_command(label="Löschen", command=self.delete_selected_item)
 
-        container.pack(fill=tk.BOTH)
-
-    def _adjust_column_width(self, *args):
-        for col_id in self["columns"]:
-            max_width = self._calculate_column_width(col_id)
-            self.column(col_id, minwidth=max_width, width=max_width)
-
-    def _calculate_column_width(self, col_id):
-        max_width = 0
-        header_text = self.heading(col_id)["text"]
-        max_width = max(max_width, self._measure_text(header_text))
-
-        for child in self.get_children():
-            cell_text = self.item(child, "values")[self["columns"].index(col_id)]
-            max_width = max(max_width, self._measure_text(cell_text))
-        return max_width
-
-    def _measure_text(self, text):
-        if not text:
-            return 0
-        font = tk.font.Font()
-        return font.measure(text) + 10
+        container.pack(fill=tk.BOTH, expand=True)
 
     def add_vertical_scrollbar(self, container: ttk.Frame):
         scrollbar = ttk.Scrollbar(container, orient=tk.VERTICAL, command=self.yview)
@@ -97,4 +75,3 @@ class GenericTreeView(ttk.Treeview):
 
         for entry in data:
             self.insert("", tk.END, values=entry)
-        self._adjust_column_width()
