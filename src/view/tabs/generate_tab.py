@@ -4,7 +4,7 @@ import os
 
 from src.controller.controller import Controller
 from src.csv_writer import CSVWriter
-from src.plan_generation import generate_plan
+from src.plan_generation import generate_plan, generate_plan_custom
 from src.view.directory_selector import DirectorySelector
 from src.view.generic_tree_view import GenericTreeView
 
@@ -95,7 +95,7 @@ class GenerateTab(ttk.Frame):
         student_grades = self.controller.student_controller.get_student_grades()
         student_choices = self.controller.student_controller.get_student_choices()
 
-        self.plan = generate_plan(
+        self.plan = generate_plan_custom(
             schueler_wahlen=student_choices,
             firmen_kapazitaet=company_capacities,
             klassen_grenze=class_limit,
